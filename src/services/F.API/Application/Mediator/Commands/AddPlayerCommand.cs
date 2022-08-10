@@ -1,4 +1,4 @@
-﻿using F.API.Models.DTO;
+﻿using F.API.Models.DTO.Add;
 using F.Core.Messages;
 using FluentValidation;
 

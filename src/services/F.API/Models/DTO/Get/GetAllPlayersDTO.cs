@@ -1,4 +1,6 @@
-﻿namespace F.API.Models.DTO;
+﻿using F.API.Models.DTO.Model;
+
+namespace F.API.Models.DTO.Get;
 
 public record struct GetAllPlayersDTO
 {

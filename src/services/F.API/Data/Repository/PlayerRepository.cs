@@ -18,7 +18,7 @@ public class PlayerRepository : IPlayerRepository
 
     public async Task Add(Player player)
     {
-        _context.Players.Add(player);
+        await _context.Players.AddAsync(player);
     }
 
     public async Task<IEnumerable<Player>> GetAll()
@@ -27,4 +27,22 @@ public class PlayerRepository : IPlayerRepository
     }
 
     public void Dispose() => _context.Dispose();
+
+    public async Task AddWithRank(Player player)
+    {
+        await _context.Players.AddAsync(player);
+    }
+
+    public async Task<IEnumerable<Player>> GetAllWithRank()
+    {
+        return await _context.Players
+                             .AsNoTracking()
+                             .Include(p => p.Ranks)
+                             .ToListAsync();
+    }
+
+    public async Task AddRank(Rank rank)
+    {
+        await _context.Ranks.AddAsync(rank);
+    }
 }

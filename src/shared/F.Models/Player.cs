@@ -20,4 +20,9 @@ public class Player : Entity
         Name = name;
         Ranks = new List<Rank>();
     }
+
+    public void AddRank(Rank rank)
+    {
+        Ranks.Add(rank);
+    }
 }

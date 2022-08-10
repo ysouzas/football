@@ -1,4 +1,4 @@
-﻿namespace F.API.Models.DTO;
+﻿namespace F.API.Models.DTO.Add;
 
 public record struct AddPlayerDTO
 {

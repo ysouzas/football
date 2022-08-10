@@ -10,6 +10,7 @@ public static class DependencyInjectionConfig
     public static void RegisterServices(this IServiceCollection services)
     {
         services.AddScoped<IPlayerRepository, PlayerRepository>();
+        services.AddScoped<IRankRepository, RankRepository>();
         services.AddScoped<ApiContext>();
         services.AddMediatR(AppDomain.CurrentDomain.GetAssemblies());
     }
