@@ -2,6 +2,7 @@
 using F.API.Application.Mediator.Queries;
 using F.API.Data.Repository.Interfaces;
 using F.API.Extensions;
+using F.API.Models.DTO.Get;
 using F.API.Models.DTO.Model;
 using F.Core.Messages;
 using F.Dealer.Interfaces;
@@ -77,9 +78,9 @@ public class PlayerCommandHandler : CommandHandler, IRequestHandler<AddPlayerCom
                            .ToArray();
 
         var playersDTO = players.Select(p => p.ToPlayerDTO())
-                                .OrderByDescending(p => p.Sum(a => a.Score)).ToArray();
+                                .ToArray();
 
-        var teamsDTO = playersDTO.Select(p => new TeamDTO(p, p.Sum(c => c.Score)));
+        var teamsDTO = playersDTO.Select(p => new TeamDTO(p.OrderByDescending(a=>a.Score).ToArray(), p.Sum(c => c.Score)));
 
         return CommandResponse<TeamDTO[]>.Create(teamsDTO.ToArray());
     }
