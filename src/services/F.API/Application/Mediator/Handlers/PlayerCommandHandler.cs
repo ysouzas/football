@@ -2,7 +2,6 @@
 using F.API.Application.Mediator.Queries;
 using F.API.Data.Repository.Interfaces;
 using F.API.Extensions;
-using F.API.Models.DTO.Get;
 using F.API.Models.DTO.Model;
 using F.Core.Messages;
 using F.Dealer.Interfaces;
@@ -14,9 +13,9 @@ namespace F.API.Application.Mediator;
 
 public class PlayerCommandHandler : CommandHandler, IRequestHandler<AddPlayerCommand, ValidationResult>,
                                                     IRequestHandler<AddPlayerWithRankCommand, ValidationResult>,
-                                                    IRequestHandler<GetAllPlayersQuery, CommandResponse<GetAllPlayersDTO>>,
-                                                    IRequestHandler<GetAllPlayersWithDetailsQuery, CommandResponse<GetAllPlayersWithDetailsDTO>>,
-                                                    IRequestHandler<GetTeamCommand, CommandResponse<GetTeamsDTO>>
+                                                    IRequestHandler<GetAllPlayersQuery, CommandResponse<PlayerDTO[]>>,
+                                                    IRequestHandler<GetAllPlayersWithDetailsQuery, CommandResponse<PlayerWithDetailsDTO[]>>,
+                                                    IRequestHandler<GetTeamCommand, CommandResponse<TeamDTO[]>>
 
 
 {
@@ -41,14 +40,12 @@ public class PlayerCommandHandler : CommandHandler, IRequestHandler<AddPlayerCom
         return await PersistData(_playerRepository.UnitOfWork);
     }
 
-    public async Task<CommandResponse<GetAllPlayersDTO>> Handle(GetAllPlayersQuery request, CancellationToken cancellationToken)
+    public async Task<CommandResponse<PlayerDTO[]>> Handle(GetAllPlayersQuery request, CancellationToken cancellationToken)
     {
         var playersFromDatabase = await _playerRepository.GetAllWithRank();
-        var playersDTO = playersFromDatabase.Select(p => p.ToPlayerDTO()).OrderByDescending(p => p.Score);
+        var playersDTO = playersFromDatabase.Select(p => p.ToPlayerDTO()).OrderByDescending(p => p.Score).ToArray();
 
-        var getAllPlayersDTO = new GetAllPlayersDTO(playersDTO.ToArray());
-
-        return CommandResponse<GetAllPlayersDTO>.Create(getAllPlayersDTO);
+        return CommandResponse<PlayerDTO[]>.Create(playersDTO);
     }
 
     public async Task<ValidationResult> Handle(AddPlayerWithRankCommand request, CancellationToken cancellationToken)
@@ -62,38 +59,28 @@ public class PlayerCommandHandler : CommandHandler, IRequestHandler<AddPlayerCom
         return await PersistData(_playerRepository.UnitOfWork);
     }
 
-    public async Task<CommandResponse<GetAllPlayersWithDetailsDTO>> Handle(GetAllPlayersWithDetailsQuery request, CancellationToken cancellationToken)
+    public async Task<CommandResponse<PlayerWithDetailsDTO[]>> Handle(GetAllPlayersWithDetailsQuery request, CancellationToken cancellationToken)
     {
         var playersFromDatabase = await _playerRepository.GetAllWithRank();
-        var playersDTO = playersFromDatabase.Select(p => p.ToPlayerWithDetailsDTO());
+        var playersDTO = playersFromDatabase.Select(p => p.ToPlayerWithDetailsDTO()).ToArray();
 
-        var getAllPlayersDTO = new GetAllPlayersWithDetailsDTO(playersDTO.ToArray());
-
-        return CommandResponse<GetAllPlayersWithDetailsDTO>.Create(getAllPlayersDTO);
+        return CommandResponse<PlayerWithDetailsDTO[]>.Create(playersDTO);
     }
 
-    public async Task<CommandResponse<GetTeamsDTO>> Handle(GetTeamCommand request, CancellationToken cancellationToken)
+    public async Task<CommandResponse<TeamDTO[]>> Handle(GetTeamCommand request, CancellationToken cancellationToken)
     {
         var playersFromDatabase = await _playerRepository.GetAllById(request.Ids);
-        var playersDTO = playersFromDatabase.Select(p => p.ToPlayerDTO());
-
-        var rng = new Random();
         var teams = _dealer.SortTeams(playersFromDatabase.ToList(), 3);
 
+        var players = teams.Values
+                           .Select(v => v.Players)
+                           .ToArray();
 
-        var asd1 = new List<TeamDTO>();
+        var playersDTO = players.Select(p => p.ToPlayerDTO())
+                                .OrderByDescending(p => p.Sum(a => a.Score)).ToArray();
 
-        foreach (var team in teams.Values.OrderBy(a => rng.Next()))
-        {
-            var aa = team.Players.Select(p => p.ToPlayerDTO()).OrderByDescending(p => p.Score).ToArray();
+        var teamsDTO = playersDTO.Select(p => new TeamDTO(p, p.Sum(c => c.Score)));
 
-            var teamDto = new TeamDTO(aa, aa.Sum(c => c.Score));
-
-            asd1.Add(teamDto);
-        }
-
-        var getAllPlayersDTO = new GetTeamsDTO(asd1.ToArray());
-
-        return CommandResponse<GetTeamsDTO>.Create(getAllPlayersDTO);
+        return CommandResponse<TeamDTO[]>.Create(teamsDTO.ToArray());
     }
 }

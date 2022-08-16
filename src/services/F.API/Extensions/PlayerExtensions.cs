@@ -10,6 +10,11 @@ public static class PlayerExtensions
         return new PlayerDTO(me.Id, me.Name, me.Score());
     }
 
+    public static PlayerDTO[] ToPlayerDTO(this List<Player> me)
+    {
+        return me.Select(p => new PlayerDTO(p.Id, p.Name, p.Score())).ToArray();
+    }
+
     public static PlayerWithDetailsDTO ToPlayerWithDetailsDTO(this Player me)
     {
         var ranksDTO = me.Ranks.Select(r => r.ToRankDTO()).ToArray();

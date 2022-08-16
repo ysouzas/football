@@ -1,9 +1,9 @@
-﻿using F.API.Models.DTO.Get;
+﻿using F.API.Models.DTO.Model;
 using F.Core.Messages;
 
 namespace F.API.Application.Mediator.Queries
 {
-    public class GetTeamCommand : CommandWithResponse<GetTeamsDTO>
+    public class GetTeamCommand : CommandWithResponse<TeamDTO[]>
     {
         public Guid[] Ids { get; set; }
 
