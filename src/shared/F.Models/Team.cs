@@ -8,7 +8,7 @@
 
         public Team()
         {
-
+            Players = new List<Player>();   
         }
 
         public Team(decimal score, List<Player> players)

@@ -7,9 +7,7 @@ public static class PlayerExtensions
 {
     public static PlayerDTO ToPlayerDTO(this Player me)
     {
-        decimal rank = Math.Round(me.Ranks.Sum(r => r.Score) / me.Ranks.Count, 2);
-
-        return new PlayerDTO(me.Id, me.Name, rank);
+        return new PlayerDTO(me.Id, me.Name, me.Score());
     }
 
     public static PlayerWithDetailsDTO ToPlayerWithDetailsDTO(this Player me)

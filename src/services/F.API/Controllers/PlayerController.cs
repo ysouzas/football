@@ -53,4 +53,11 @@ public class PlayerController : MainController
         var command = AddRankCommand.CreateFromDTO(addRankDTO);
         return CustomResponse(await _mediator.Send(command));
     }
+
+    [HttpPost("teams")]
+    public async Task<IActionResult> Teams(Guid[] ids)
+    {
+        var command = GetTeamCommand.Create(ids);
+        return CustomResponse(await _mediator.Send(command));
+    }
 }

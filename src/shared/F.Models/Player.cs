@@ -25,4 +25,12 @@ public class Player : Entity
     {
         Ranks.Add(rank);
     }
+
+    public decimal Score()
+    {
+        if (Ranks.Count > 0)
+            return Math.Round(Ranks.Sum(r => r.Score) / Ranks.Count, 2);
+
+        return 0;
+    }
 }

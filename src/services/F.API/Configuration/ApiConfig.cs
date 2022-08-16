@@ -10,6 +10,17 @@ public static class ApiConfig
     {
         services.AddDbContext<ApiContext>(options => options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
         services.AddControllers();
+
+        services.AddCors(options =>
+        {
+            options.AddPolicy("Total",
+                builder =>
+                    builder
+                        .AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader());
+        });
+
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
     }
@@ -23,6 +34,8 @@ public static class ApiConfig
         }
 
         app.UseHttpsRedirection();
+
+        app.UseCors("Total");
 
         app.UseAuthorization();
 

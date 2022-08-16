@@ -45,4 +45,13 @@ public class PlayerRepository : IPlayerRepository
     {
         await _context.Ranks.AddAsync(rank);
     }
+
+    public async Task<IEnumerable<Player>> GetAllById(Guid[] ids)
+    {
+        return await _context.Players
+                             .AsNoTracking()
+                             .Include(p => p.Ranks)
+                             .Where(p => ids.Contains(p.Id))
+                             .ToListAsync();
+    }
 }
