@@ -81,6 +81,6 @@ public class PlayerCommandHandler : CommandHandler, IRequestHandler<AddPlayerCom
 
         var teamsDTO = playersDTO.Select(p => new TeamDTO(p.OrderByDescending(a => a.Score).ToArray(), p.Sum(c => c.Score)));
 
-        return CommandResponse<TeamDTO[]>.Create(teamsDTO.ToArray());
+        return CommandResponse<TeamDTO[]>.Create(teamsDTO.OrderBy(t => t.Score).ToArray());
     }
 }
