@@ -30,8 +30,8 @@ public class Player : Entity
     {
         if (Ranks.Count >= 4)
         {
-            var ranks = Ranks.OrderByDescending(r => r.Date).Take(1).Sum(r => r.Score);
-            var score = Math.Round(Ranks.OrderByDescending(r => r.Date).Take(1).Sum(r => r.Score) / 1, 2);
+            var rank = Ranks.OrderByDescending(r => r.Date).Take(4).Sum(r => r.Score);
+            var score = Math.Round(rank / 4, 2);
             return score;
         }
 
