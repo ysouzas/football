@@ -7,12 +7,21 @@ public static class PlayerExtensions
 {
     public static PlayerDTO ToPlayerDTO(this Player me)
     {
-        return new PlayerDTO(me.Id, me.Name, me.Score());
+        return new PlayerDTO
+        {
+            Id = me.Id,
+            Name = me.Name,
+            GeneralScore = me.GeneralScore(),
+            MomentScore = me.MomentScore(),
+            MondayScore = me.DayOfWeekScoreCalculation(DayOfWeek.Monday),
+            WednesdayScore = me.DayOfWeekScoreCalculation(DayOfWeek.Wednesday)
+            
+        };
     }
 
     public static PlayerDTO[] ToPlayerDTO(this List<Player> me)
     {
-        return me.Select(p => new PlayerDTO(p.Id, p.Name, p.Score())).ToArray();
+        return me.Select(p => p.ToPlayerDTO()).ToArray();
     }
 
     public static PlayerWithDetailsDTO ToPlayerWithDetailsDTO(this Player me)

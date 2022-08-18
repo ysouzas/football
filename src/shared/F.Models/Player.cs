@@ -26,11 +26,37 @@ public class Player : Entity
         Ranks.Add(rank);
     }
 
-    public decimal Score()
+    public decimal MomentScore()
     {
+        if (Ranks.Count >= 4)
+        {
+            var ranks = Ranks.OrderByDescending(r => r.Date).Take(1).Sum(r => r.Score);
+            var score = Math.Round(Ranks.OrderByDescending(r => r.Date).Take(1).Sum(r => r.Score) / 1, 2);
+            return score;
+        }
+
         if (Ranks.Count > 0)
-            return Math.Round(Ranks.Sum(r => r.Score) / Ranks.Count, 2);
+            return this.BaseScoreCalculation(this.Ranks);
 
         return 0;
     }
+
+    public decimal GeneralScore()
+    {
+        return this.BaseScoreCalculation(this.Ranks);
+    }
+
+    public decimal DayOfWeekScoreCalculation(DayOfWeek dayOfWeek)
+    {
+        return this.BaseScoreCalculation(this.Ranks.Where(r => r.DayOfWeek == dayOfWeek).ToList());
+    }
+
+    private decimal BaseScoreCalculation(ICollection<Rank> rank)
+    {
+        if (rank.Count > 0)
+            return Math.Round(rank.Sum(r => r.Score) / rank.Count, 2);
+
+        return 0;
+    }
+
 }

@@ -43,7 +43,7 @@ public class PlayerCommandHandler : CommandHandler, IRequestHandler<AddPlayerCom
     public async Task<CommandResponse<PlayerDTO[]>> Handle(GetAllPlayersQuery request, CancellationToken cancellationToken)
     {
         var playersFromDatabase = await _playerRepository.GetAllWithRank();
-        var playersDTO = playersFromDatabase.Select(p => p.ToPlayerDTO()).OrderByDescending(p => p.Score).ToArray();
+        var playersDTO = playersFromDatabase.Select(p => p.ToPlayerDTO()).OrderByDescending(p => p.MomentScore).ToArray();
 
         return CommandResponse<PlayerDTO[]>.Create(playersDTO);
     }
@@ -79,7 +79,7 @@ public class PlayerCommandHandler : CommandHandler, IRequestHandler<AddPlayerCom
         var playersDTO = players.Select(p => p.ToPlayerDTO())
                                 .ToArray();
 
-        var teamsDTO = playersDTO.Select(p => new TeamDTO(p.OrderByDescending(a => a.Score).ToArray(), p.Sum(c => c.Score)));
+        var teamsDTO = playersDTO.Select(p => new TeamDTO(p.OrderByDescending(a => a.GeneralScore).ToArray(), p.Sum(c => c.GeneralScore)));
 
         return CommandResponse<TeamDTO[]>.Create(teamsDTO.OrderBy(t => t.Score).ToArray());
     }
