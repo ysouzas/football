@@ -46,13 +46,13 @@ public class SortDealer : IDealer
     {
         if (isWeak)
         {
-            this.MethodToGetPlayer = (List<Player> players) => players.OrderBy(c => c.MomentScore()).FirstOrDefault();
-            this.MethodToGetTeamKey = (Dictionary<int, Team> dic) => dic.OrderBy(d => d.Value.Players.Count).ThenByDescending(d => d.Value.Players.Sum(v => v.MomentScore())).FirstOrDefault().Key;
+            this.MethodToGetPlayer = (List<Player> players) => players.OrderBy(c => c.GeneralScore()).FirstOrDefault();
+            this.MethodToGetTeamKey = (Dictionary<int, Team> dic) => dic.OrderBy(d => d.Value.Players.Count).ThenByDescending(d => d.Value.Players.Sum(v => v.GeneralScore())).FirstOrDefault().Key;
         }
         else
         {
-            this.MethodToGetPlayer = (List<Player> players) => players.OrderByDescending(c => c.MomentScore()).FirstOrDefault();
-            this.MethodToGetTeamKey = (Dictionary<int, Team> dic) => dic.OrderBy(d => d.Value.Players.Count).ThenBy(d => d.Value.Players.Sum(v => v.MomentScore())).FirstOrDefault().Key;
+            this.MethodToGetPlayer = (List<Player> players) => players.OrderByDescending(c => c.GeneralScore()).FirstOrDefault();
+            this.MethodToGetTeamKey = (Dictionary<int, Team> dic) => dic.OrderBy(d => d.Value.Players.Count).ThenBy(d => d.Value.Players.Sum(v => v.GeneralScore())).FirstOrDefault().Key;
         }
     }
 }

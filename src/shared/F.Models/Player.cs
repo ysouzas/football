@@ -26,21 +26,6 @@ public class Player : Entity
         Ranks.Add(rank);
     }
 
-    public decimal MomentScore()
-    {
-        if (Ranks.Count >= 4)
-        {
-            var rank = Ranks.OrderByDescending(r => r.Date).Take(4).Sum(r => r.Score);
-            var score = Math.Round(rank / 4, 2);
-            return score;
-        }
-
-        if (Ranks.Count > 0)
-            return this.BaseScoreCalculation(this.Ranks);
-
-        return 0;
-    }
-
     public decimal GeneralScore()
     {
         return this.BaseScoreCalculation(this.Ranks);
