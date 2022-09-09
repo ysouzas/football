@@ -12,10 +12,8 @@ public static class PlayerExtensions
             Id = me.Id,
             Name = me.Name,
             GeneralScore = me.GeneralScore(),
-            MomentScore = me.MomentScore(),
             MondayScore = me.DayOfWeekScoreCalculation(DayOfWeek.Monday),
             WednesdayScore = me.DayOfWeekScoreCalculation(DayOfWeek.Wednesday)
-            
         };
     }
 
