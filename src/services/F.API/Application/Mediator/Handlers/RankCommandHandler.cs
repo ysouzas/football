@@ -5,7 +5,9 @@ using F.Models;
 using FluentValidation.Results;
 using MediatR;
 
-public class RankCommandHandler : CommandHandler, IRequestHandler<AddRankCommand, ValidationResult>
+public class RankCommandHandler : CommandHandler,
+                                  IRequestHandler<AddRankCommand, ValidationResult>,
+                                  IRequestHandler<AddRanksCommand, ValidationResult>
 {
     private readonly IRankRepository _rankRepository;
 
@@ -19,6 +21,13 @@ public class RankCommandHandler : CommandHandler, IRequestHandler<AddRankCommand
         var rank = new Rank(request.Score, request.DayOfWeek, request.Date, request.PlayerId);
 
         await _rankRepository.Add(rank);
+
+        return await PersistData(_rankRepository.UnitOfWork);
+    }
+
+    public async Task<ValidationResult> Handle(AddRanksCommand request, CancellationToken cancellationToken)
+    {
+        await _rankRepository.AddRanks(request.Ranks);
 
         return await PersistData(_rankRepository.UnitOfWork);
     }

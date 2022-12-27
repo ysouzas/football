@@ -23,4 +23,11 @@ public class RankController : MainController
         var command = AddRankCommand.CreateFromDTO(addRankDTO);
         return CustomResponse(await _mediator.Send(command));
     }
+
+    [HttpPost("AddListOfRanks")]
+    public async Task<IActionResult> AddRanks(AddRankDTO[] addRanksDTO)
+    {
+        var command = AddRanksCommand.CreateFromDTO(addRanksDTO);
+        return CustomResponse(await _mediator.Send(command));
+    }
 }

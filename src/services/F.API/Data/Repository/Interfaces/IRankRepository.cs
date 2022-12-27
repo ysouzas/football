@@ -7,4 +7,5 @@ public interface IRankRepository : IRepository<Rank>
 {
     Task Add(Rank rank);
 
+    Task AddRanks(Rank[] ranks);
 }
