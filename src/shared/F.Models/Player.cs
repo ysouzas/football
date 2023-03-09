@@ -47,7 +47,7 @@ public class Player : Entity
         if (rank.Count == 0)
             return 0;
 
-        var dateTime = DateTime.Now.AddDays(4);
+        var dateTime = DateTime.Now;
         var oneMonthAgoDate = dateTime.AddMonths(-1);
         var hasTwo = rank.Where(r => r.Date >= oneMonthAgoDate).Any(r => r.DayOfWeek == DayOfWeek.Monday) && rank.Where(r => r.Date >= oneMonthAgoDate).Any(r => r.DayOfWeek == DayOfWeek.Wednesday);
         var ranks = rank.Where(r => r.Date >= oneMonthAgoDate).OrderBy(c => c.Date).ToList();
@@ -80,30 +80,6 @@ public class Player : Entity
         count = ranks.Count;
 
         if (count > 9)
-            return Math.Round(ranks.Sum(r => r.Score) / count, 2);
-
-        var fourMonthsAgoDate = dateTime.AddMonths(-4);
-
-        ranks = rank.Where(r => r.Date >= fourMonthsAgoDate).OrderBy(c => c.Date).ToList();
-        count = ranks.Count;
-
-        if (count > 13)
-            return Math.Round(ranks.Sum(r => r.Score) / count, 2);
-
-        var fiveMonthsAgoDate = dateTime.AddMonths(-5);
-
-        ranks = rank.Where(r => r.Date >= fiveMonthsAgoDate).OrderBy(c => c.Date).ToList();
-        count = ranks.Count;
-
-        if (count > 15)
-            return Math.Round(ranks.Sum(r => r.Score) / count, 2);
-
-        var sixMonthsAgoDate = dateTime.AddMonths(-6);
-
-        ranks = rank.Where(r => r.Date >= sixMonthsAgoDate).OrderBy(c => c.Date).ToList();
-        count = ranks.Count;
-
-        if (count > 17)
             return Math.Round(ranks.Sum(r => r.Score) / count, 2);
 
         return Math.Round(rank.Sum(r => r.Score) / rank.Count, 2);
