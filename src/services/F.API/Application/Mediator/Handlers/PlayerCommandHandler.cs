@@ -70,7 +70,8 @@ public class PlayerCommandHandler : CommandHandler, IRequestHandler<AddPlayerCom
     public async Task<CommandResponse<TeamDTO[]>> Handle(GetTeamCommand request, CancellationToken cancellationToken)
     {
         var playersFromDatabase = await _playerRepository.GetAllById(request.Ids);
-        var teams = _dealer.SortTeamsRandom(playersFromDatabase.ToList(), 3);
+
+        var teams = request.Ids.Length > 14 ? _dealer.SortTeamsRandom(playersFromDatabase.ToList(), 3) : _dealer.SortTeams(playersFromDatabase.ToList(), 3);
 
         var players = teams.Values
                            .Select(v => v.Players)
