@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace F.Models;
 
@@ -9,6 +10,9 @@ public class Player : Entity
 
     // EF Relation
     public ICollection<Rank> Ranks { get; set; }
+
+    [NotMapped]
+    public decimal? GeneralRank { get; set; } = null;
 
     public Player()
     {
@@ -28,12 +32,14 @@ public class Player : Entity
 
     public decimal GeneralScore()
     {
-        return this.BaseScoreCalculation(this.Ranks);
-    }
+        if (GeneralRank is null)
+        {
+            GeneralRank = this.BaseScoreCalculation(this.Ranks);
 
-    public decimal DayOfWeekScoreCalculation(DayOfWeek dayOfWeek)
-    {
-        return this.BaseScoreCalculation(this.Ranks.Where(r => r.DayOfWeek == dayOfWeek).ToList());
+            return GeneralRank.Value;
+        };
+
+        return GeneralRank.Value;
     }
 
     private decimal BaseScoreCalculation(ICollection<Rank> rank)
@@ -41,10 +47,64 @@ public class Player : Entity
         if (rank.Count == 0)
             return 0;
 
-        if (rank.Count is >= 12)
-        {
-            return Math.Round(rank.OrderBy(r => r.Date).TakeLast(12).Sum(r => r.Score) / 12, 2);
-        }
+        var dateTime = DateTime.Now.AddDays(4);
+        var oneMonthAgoDate = dateTime.AddMonths(-1);
+        var hasTwo = rank.Where(r => r.Date >= oneMonthAgoDate).Any(r => r.DayOfWeek == DayOfWeek.Monday) && rank.Where(r => r.Date >= oneMonthAgoDate).Any(r => r.DayOfWeek == DayOfWeek.Wednesday);
+        var ranks = rank.Where(r => r.Date >= oneMonthAgoDate).OrderBy(c => c.Date).ToList();
+        var count = ranks.Count;
+
+        if (count >= 7 && hasTwo)
+            return Math.Round(ranks.Sum(r => r.Score) / count, 2);
+
+
+        var oneAndHalfMonthAgoDate = oneMonthAgoDate.AddDays(-14);
+        hasTwo = rank.Where(r => r.Date >= oneAndHalfMonthAgoDate).Any(r => r.DayOfWeek == DayOfWeek.Monday) && rank.Where(r => r.Date >= oneAndHalfMonthAgoDate).Any(r => r.DayOfWeek == DayOfWeek.Wednesday);
+        ranks = rank.Where(r => r.Date >= oneAndHalfMonthAgoDate).OrderBy(c => c.Date).ToList();
+        count = ranks.Count;
+
+        if (count >= 9 && hasTwo)
+            return Math.Round(ranks.Sum(r => r.Score) / count, 2);
+
+
+        var twoMonthsAgoDate = dateTime.AddMonths(-2);
+
+        ranks = rank.Where(r => r.Date >= twoMonthsAgoDate).OrderBy(c => c.Date).ToList();
+        count = ranks.Count;
+
+        if (count >= 7)
+            return Math.Round(ranks.Sum(r => r.Score) / count, 2);
+
+        var threeMonthsAgoDate = dateTime.AddMonths(-3);
+
+        ranks = rank.Where(r => r.Date >= threeMonthsAgoDate).OrderBy(c => c.Date).ToList();
+        count = ranks.Count;
+
+        if (count > 9)
+            return Math.Round(ranks.Sum(r => r.Score) / count, 2);
+
+        var fourMonthsAgoDate = dateTime.AddMonths(-4);
+
+        ranks = rank.Where(r => r.Date >= fourMonthsAgoDate).OrderBy(c => c.Date).ToList();
+        count = ranks.Count;
+
+        if (count > 13)
+            return Math.Round(ranks.Sum(r => r.Score) / count, 2);
+
+        var fiveMonthsAgoDate = dateTime.AddMonths(-5);
+
+        ranks = rank.Where(r => r.Date >= fiveMonthsAgoDate).OrderBy(c => c.Date).ToList();
+        count = ranks.Count;
+
+        if (count > 15)
+            return Math.Round(ranks.Sum(r => r.Score) / count, 2);
+
+        var sixMonthsAgoDate = dateTime.AddMonths(-6);
+
+        ranks = rank.Where(r => r.Date >= sixMonthsAgoDate).OrderBy(c => c.Date).ToList();
+        count = ranks.Count;
+
+        if (count > 17)
+            return Math.Round(ranks.Sum(r => r.Score) / count, 2);
 
         return Math.Round(rank.Sum(r => r.Score) / rank.Count, 2);
     }
