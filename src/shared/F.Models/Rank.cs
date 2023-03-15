@@ -1,4 +1,6 @@
-﻿namespace F.Models;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace F.Models;
 
 public class Rank : Entity
 {
@@ -18,8 +20,25 @@ public class Rank : Entity
     }
 
     public decimal Score { get; set; }
+
     public DayOfWeek DayOfWeek { get; set; }
+
     public DateTime Date { get; set; }
+
+    [NotMapped]
+    public DateOnly? DateOnly { get; set; } = null;
+
+    public DateOnly DateOnlyGeneral()
+    {
+        if (DateOnly is null)
+        {
+            DateOnly = new DateOnly(Date.Year, Date.Month, Date.Day);
+
+            return DateOnly.Value;
+        };
+
+        return DateOnly.Value;
+    }
 
     public Guid PlayerId { get; set; }
 
