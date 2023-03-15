@@ -4,6 +4,7 @@ using F.Models;
 using FluentValidation;
 
 namespace F.API.Application.Mediator.Commands;
+
 public class AddRanksCommand : Command
 {
     public Rank[] Ranks { get; set; }

@@ -49,8 +49,8 @@ public class Player : Entity
 
         var dateTime = DateTime.Now;
         var oneMonthAgoDate = dateTime.AddMonths(-1);
-        var hasTwo = rank.Where(r => r.Date >= oneMonthAgoDate).Any(r => r.DayOfWeek == DayOfWeek.Monday) && rank.Where(r => r.Date >= oneMonthAgoDate).Any(r => r.DayOfWeek == DayOfWeek.Wednesday);
-        var ranks = rank.Where(r => r.Date >= oneMonthAgoDate).OrderBy(c => c.Date).ToList();
+        var hasTwo = rank.Where(r => r.Date.Date >= oneMonthAgoDate.Date).Any(r => r.DayOfWeek == DayOfWeek.Monday) && rank.Where(r => r.Date.Date >= oneMonthAgoDate.Date).Any(r => r.DayOfWeek == DayOfWeek.Wednesday);
+        var ranks = rank.Where(r => r.Date.Date >= oneMonthAgoDate.Date).OrderBy(c => c.Date).ToList();
         var count = ranks.Count;
 
         if (count >= 7 && hasTwo)
@@ -58,8 +58,8 @@ public class Player : Entity
 
 
         var oneAndHalfMonthAgoDate = oneMonthAgoDate.AddDays(-14);
-        hasTwo = rank.Where(r => r.Date >= oneAndHalfMonthAgoDate).Any(r => r.DayOfWeek == DayOfWeek.Monday) && rank.Where(r => r.Date >= oneAndHalfMonthAgoDate).Any(r => r.DayOfWeek == DayOfWeek.Wednesday);
-        ranks = rank.Where(r => r.Date >= oneAndHalfMonthAgoDate).OrderBy(c => c.Date).ToList();
+        hasTwo = rank.Where(r => r.Date.Date >= oneAndHalfMonthAgoDate.Date).Any(r => r.DayOfWeek == DayOfWeek.Monday) && rank.Where(r => r.Date.Date >= oneAndHalfMonthAgoDate.Date).Any(r => r.DayOfWeek == DayOfWeek.Wednesday);
+        ranks = rank.Where(r => r.Date.Date >= oneAndHalfMonthAgoDate.Date).OrderBy(c => c.Date).ToList();
         count = ranks.Count;
 
         if (count >= 9 && hasTwo)
@@ -68,7 +68,7 @@ public class Player : Entity
 
         var twoMonthsAgoDate = dateTime.AddMonths(-2);
 
-        ranks = rank.Where(r => r.Date >= twoMonthsAgoDate).OrderBy(c => c.Date).ToList();
+        ranks = rank.Where(r => r.Date.Date >= twoMonthsAgoDate.Date).OrderBy(c => c.Date).ToList();
         count = ranks.Count;
 
         if (count >= 7)
@@ -76,7 +76,7 @@ public class Player : Entity
 
         var threeMonthsAgoDate = dateTime.AddMonths(-3);
 
-        ranks = rank.Where(r => r.Date >= threeMonthsAgoDate).OrderBy(c => c.Date).ToList();
+        ranks = rank.Where(r => r.Date.Date >= threeMonthsAgoDate.Date).OrderBy(c => c.Date).ToList();
         count = ranks.Count;
 
         if (count > 9)

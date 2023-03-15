@@ -19,6 +19,7 @@ public class RankRepository : IRankRepository
     {
         await _context.Ranks.AddAsync(rank);
     }
+
     public async Task AddRanks(Rank[] ranks)
     {
         await _context.Ranks.AddRangeAsync(ranks);
