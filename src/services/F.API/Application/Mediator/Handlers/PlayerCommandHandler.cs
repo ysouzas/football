@@ -15,7 +15,8 @@ public class PlayerCommandHandler : CommandHandler, IRequestHandler<AddPlayerCom
                                                     IRequestHandler<AddPlayerWithRankCommand, ValidationResult>,
                                                     IRequestHandler<GetAllPlayersQuery, CommandResponse<PlayerDTO[]>>,
                                                     IRequestHandler<GetAllPlayersWithDetailsQuery, CommandResponse<PlayerWithDetailsDTO[]>>,
-                                                    IRequestHandler<GetTeamCommand, CommandResponse<TeamDTO[]>>
+                                                    IRequestHandler<GetTeamCommand, CommandResponse<TeamDTO[]>>,
+                                                    IRequestHandler<GetRanking, CommandResponse<PlayerDTO[]>>
 
 
 {
@@ -83,5 +84,19 @@ public class PlayerCommandHandler : CommandHandler, IRequestHandler<AddPlayerCom
         var teamsDTO = playersDTO.Select(p => new TeamDTO(p.OrderByDescending(a => a.GeneralScore).ToArray(), p.Sum(c => c.GeneralScore)));
 
         return CommandResponse<TeamDTO[]>.Create(teamsDTO.OrderBy(t => t.Score).ToArray());
+    }
+
+    public async Task<CommandResponse<PlayerDTO[]>> Handle(GetRanking request, CancellationToken cancellationToken)
+    {
+        var dateTime = new DateOnly(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
+
+        var threeMonthAgoDate = dateTime.AddMonths(-2);
+
+        var playersFromDatabase = await _playerRepository.GetAllWithRankWhereByTime(threeMonthAgoDate);
+
+        var playersDTO = playersFromDatabase.Select(p => p.ToPlayerDTO()).ToArray();
+
+        return CommandResponse<PlayerDTO[]>.Create(playersDTO);
+
     }
 }

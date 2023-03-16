@@ -54,4 +54,18 @@ public class PlayerRepository : IPlayerRepository
                              .Where(p => ids.Contains(p.Id))
                              .ToListAsync();
     }
+
+    public async Task<IEnumerable<Player>> GetAllWithRankWhereByTime(DateOnly date)
+    {
+        var players = await _context.Players
+                             .AsNoTracking()
+                             .Include(p => p.Ranks)
+                             .ToListAsync();
+
+        var playersOrdered = players.Where(p => p.Ranks.Any(r => r.DateOnlyGeneral() >= date))
+                             .OrderByDescending(p => p.GeneralScore()).ToArray();
+
+        return playersOrdered;
+
+    }
 }

@@ -60,4 +60,11 @@ public class PlayerController : MainController
         var command = GetTeamCommand.Create(ids);
         return CustomResponse(await _mediator.Send(command));
     }
+
+    [HttpGet("ranking")]
+    public async Task<IActionResult> Ranking()
+    {
+        var command = new GetRanking();
+        return CustomResponse(await _mediator.Send(command));
+    }
 }

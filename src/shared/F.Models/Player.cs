@@ -49,7 +49,7 @@ public class Player : Entity
 
         var dateTime = new DateOnly(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
 
-        var oneMonthAgoDate = dateTime.AddMonths(-1); ;
+        var oneMonthAgoDate = dateTime.AddMonths(-1); 
 
         var hasTwo = rank.Where(r => r.DateOnlyGeneral() >= oneMonthAgoDate).Any(r => r.DayOfWeek == DayOfWeek.Monday) && rank.Where(r => r.DateOnlyGeneral() >= oneMonthAgoDate).Any(r => r.DayOfWeek == DayOfWeek.Wednesday);
         var ranks = rank.Where(r => r.DateOnlyGeneral() >= oneMonthAgoDate).OrderBy(c => c.Date).ToList();
