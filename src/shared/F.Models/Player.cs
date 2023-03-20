@@ -49,22 +49,13 @@ public class Player : Entity
 
         var dateTime = new DateOnly(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
 
-        var oneMonthAgoDate = dateTime.AddMonths(-1); 
+        var oneMonthAgoDate = dateTime.AddMonths(-1);
 
         var hasTwo = rank.Where(r => r.DateOnlyGeneral() >= oneMonthAgoDate).Any(r => r.DayOfWeek == DayOfWeek.Monday) && rank.Where(r => r.DateOnlyGeneral() >= oneMonthAgoDate).Any(r => r.DayOfWeek == DayOfWeek.Wednesday);
         var ranks = rank.Where(r => r.DateOnlyGeneral() >= oneMonthAgoDate).OrderBy(c => c.Date).ToList();
         var count = ranks.Count;
 
-        if (count >= 7 && hasTwo)
-            return Math.Round(ranks.Sum(r => r.Score) / count, 2);
-
-
-        var oneAndHalfMonthAgoDate = oneMonthAgoDate.AddDays(-14);
-        hasTwo = rank.Where(r => r.DateOnlyGeneral() >= oneAndHalfMonthAgoDate).Any(r => r.DayOfWeek == DayOfWeek.Monday) && rank.Where(r => r.DateOnlyGeneral() >= oneAndHalfMonthAgoDate).Any(r => r.DayOfWeek == DayOfWeek.Wednesday);
-        ranks = rank.Where(r => r.DateOnlyGeneral() >= oneAndHalfMonthAgoDate).OrderBy(c => c.Date).ToList();
-        count = ranks.Count;
-
-        if (count >= 9 && hasTwo)
+        if (count == 8 && hasTwo)
             return Math.Round(ranks.Sum(r => r.Score) / count, 2);
 
 
@@ -73,7 +64,7 @@ public class Player : Entity
         ranks = rank.Where(r => r.DateOnlyGeneral() >= twoMonthsAgoDate).OrderBy(c => c.Date).ToList();
         count = ranks.Count;
 
-        if (count >= 7)
+        if (count >= 8)
             return Math.Round(ranks.Sum(r => r.Score) / count, 2);
 
         var threeMonthsAgoDate = dateTime.AddMonths(-3);
@@ -81,7 +72,7 @@ public class Player : Entity
         ranks = rank.Where(r => r.DateOnlyGeneral() >= threeMonthsAgoDate).OrderBy(c => c.Date).ToList();
         count = ranks.Count;
 
-        if (count > 9)
+        if (count > 11)
             return Math.Round(ranks.Sum(r => r.Score) / count, 2);
 
         return Math.Round(rank.Sum(r => r.Score) / rank.Count, 2);
