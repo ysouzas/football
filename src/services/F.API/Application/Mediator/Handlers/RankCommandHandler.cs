@@ -27,6 +27,8 @@ public class RankCommandHandler : CommandHandler,
 
     public async Task<ValidationResult> Handle(AddRanksCommand request, CancellationToken cancellationToken)
     {
+        if (!request.IsValid()) return request.ValidationResult;
+
         await _rankRepository.AddRanks(request.Ranks);
 
         return await PersistData(_rankRepository.UnitOfWork);

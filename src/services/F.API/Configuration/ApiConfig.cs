@@ -9,6 +9,7 @@ public static class ApiConfig
     public static void AddApiConfiguration(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<ApiContext>(options => options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+        services.AddCaching(configuration);
         services.AddControllers();
 
         services.AddCors(options =>

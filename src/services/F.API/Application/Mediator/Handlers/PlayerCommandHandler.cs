@@ -3,6 +3,7 @@ using F.API.Application.Mediator.Queries;
 using F.API.Data.Repository.Interfaces;
 using F.API.Extensions;
 using F.API.Models.DTO.Model;
+using F.Core.Data;
 using F.Core.Messages;
 using F.Dealer.Interfaces;
 using F.Models;
@@ -22,12 +23,14 @@ public class PlayerCommandHandler : CommandHandler, IRequestHandler<AddPlayerCom
 {
     private readonly IPlayerRepository _playerRepository;
     private readonly IDealer _dealer;
+    private readonly ICache _cache;
 
 
-    public PlayerCommandHandler(IPlayerRepository playerRepository, IDealer dealer)
+    public PlayerCommandHandler(IPlayerRepository playerRepository, IDealer dealer, ICache cache)
     {
         _playerRepository = playerRepository;
         _dealer = dealer;
+        _cache = cache;
     }
 
     public async Task<ValidationResult> Handle(AddPlayerCommand request, CancellationToken cancellationToken)
@@ -70,9 +73,38 @@ public class PlayerCommandHandler : CommandHandler, IRequestHandler<AddPlayerCom
 
     public async Task<CommandResponse<TeamDTO[]>> Handle(GetTeamCommand request, CancellationToken cancellationToken)
     {
-        var playersFromDatabase = await _playerRepository.GetAllById(request.Ids);
+        var playersToList = new List<Player>();
+        var idsToGetOnDatabase = request.Ids.ToList();
 
-        var teams = request.Ids.Length > 14 ? _dealer.SortTeamsRandom(playersFromDatabase.ToList(), 3) : _dealer.SortTeams(playersFromDatabase.ToList(), 3);
+        foreach (var id in request.Ids)
+        {
+            var playerFromCache = await _cache.GetCacheDataAsync<Player>(id.ToString());
+
+            if (playerFromCache != null)
+            {
+                playersToList.Add(playerFromCache);
+
+                idsToGetOnDatabase.Remove(id);
+            }
+        }
+
+        if (idsToGetOnDatabase.Count > 0)
+        {
+            var playersFromDatabase = await _playerRepository.GetAllById(idsToGetOnDatabase.ToArray());
+
+            foreach (var playerToCache in playersFromDatabase)
+            {
+                playerToCache.GeneralScore();
+
+                playerToCache.Ranks = new List<Rank>();
+
+                await _cache.SetCacheDataAsync<Player>(playerToCache.Id.ToString(), playerToCache, 1440);
+            }
+
+            playersToList.AddRange(playersFromDatabase);
+        }
+
+        var teams = request.Ids.Length > 14 ? _dealer.SortTeamsRandom(playersToList.ToList(), 3) : _dealer.SortTeams(playersToList.ToList(), 3);
 
         var players = teams.Values
                            .Select(v => v.Players)
@@ -90,7 +122,7 @@ public class PlayerCommandHandler : CommandHandler, IRequestHandler<AddPlayerCom
     {
         var dateTime = new DateOnly(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
 
-        var threeMonthAgoDate = dateTime.AddMonths(-2);
+        var threeMonthAgoDate = dateTime.AddMonths(-1);
 
         var playersFromDatabase = await _playerRepository.GetAllWithRankWhereByTime(threeMonthAgoDate);
 
