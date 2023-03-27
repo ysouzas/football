@@ -37,6 +37,8 @@ jobs:
           files: "${{env.AZURE_WEBAPP_PACKAGE_PATH}}/f.api/appsettings.json"
         env:
           ConnectionStrings.DefaultConnection: ${{ secrets.CONNECTION_STRING }}
+          ConnectionStrings.Cache: ${{ secrets.CACHE }}
+
 
       # Deploy to Azure Web apps
       - name: "Run Azure webapp deploy action using publish profile credentials"
