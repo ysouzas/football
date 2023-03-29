@@ -46,9 +46,18 @@ public class PlayerCommandHandler : CommandHandler, IRequestHandler<AddPlayerCom
 
     public async Task<CommandResponse<PlayerDTO[]>> Handle(GetAllPlayersQuery request, CancellationToken cancellationToken)
     {
+        var playersFromCache = await _cache.GetCacheDataAsync<IEnumerable<PlayerDTO>>("players");
+
+        if (playersFromCache is not null && playersFromCache.Any())
+        {
+            var orderedPlayersFromCache = playersFromCache.OrderByDescending(p => p.GeneralScore).ToArray();
+            return CommandResponse<PlayerDTO[]>.Create(orderedPlayersFromCache);
+        }
+
         var playersFromDatabase = await _playerRepository.GetAllWithRank();
         var playersDTO = playersFromDatabase.Select(p => p.ToPlayerDTO()).OrderByDescending(p => p.GeneralScore).ToArray();
 
+        await _cache.SetCacheDataAsync<IEnumerable<PlayerDTO>>("players", playersDTO, 1440);
         return CommandResponse<PlayerDTO[]>.Create(playersDTO);
     }
 
@@ -80,7 +89,7 @@ public class PlayerCommandHandler : CommandHandler, IRequestHandler<AddPlayerCom
         {
             var playerFromCache = await _cache.GetCacheDataAsync<Player>(id.ToString());
 
-            if (playerFromCache != null)
+            if (playerFromCache is not null)
             {
                 playersToList.Add(playerFromCache);
 
@@ -98,7 +107,7 @@ public class PlayerCommandHandler : CommandHandler, IRequestHandler<AddPlayerCom
 
                 playerToCache.Ranks = new List<Rank>();
 
-                await _cache.SetCacheDataAsync<Player>(playerToCache.Id.ToString(), playerToCache, 1440);
+                await _cache.SetCacheDataAsync(playerToCache.Id.ToString(), playerToCache, 1440);
             }
 
             playersToList.AddRange(playersFromDatabase);
