@@ -3,6 +3,7 @@ using F.API.Application.Mediator.Queries;
 using F.API.Data.Repository.Interfaces;
 using F.API.Extensions;
 using F.API.Models.DTO.Model;
+using F.API.Models.DTO.Queries;
 using F.Core.Data;
 using F.Core.Messages;
 using F.Dealer.Interfaces;
@@ -17,7 +18,7 @@ public class PlayerCommandHandler : CommandHandler, IRequestHandler<AddPlayerCom
                                                     IRequestHandler<GetAllPlayersQuery, CommandResponse<PlayerDTO[]>>,
                                                     IRequestHandler<GetAllPlayersWithDetailsQuery, CommandResponse<PlayerWithDetailsDTO[]>>,
                                                     IRequestHandler<GetTeamCommand, CommandResponse<TeamDTO[]>>,
-                                                    IRequestHandler<GetRanking, CommandResponse<PlayerDTO[]>>
+                                                    IRequestHandler<GetRanking, CommandResponse<Ranking>>
 
 
 {
@@ -127,17 +128,19 @@ public class PlayerCommandHandler : CommandHandler, IRequestHandler<AddPlayerCom
         return CommandResponse<TeamDTO[]>.Create(teamsDTO.OrderBy(t => t.Score).ToArray());
     }
 
-    public async Task<CommandResponse<PlayerDTO[]>> Handle(GetRanking request, CancellationToken cancellationToken)
+    public async Task<CommandResponse<Ranking>> Handle(GetRanking request, CancellationToken cancellationToken)
     {
         var dateTime = new DateOnly(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
 
-        var threeMonthAgoDate = dateTime.AddMonths(-1);
+        var twoMonthAgoDate = dateTime.AddMonths(-1);
 
-        var playersFromDatabase = await _playerRepository.GetAllWithRankWhereByTime(threeMonthAgoDate);
+        var playersFromDatabase = await _playerRepository.GetAllWithRankWhereByTime(twoMonthAgoDate);
 
         var playersDTO = playersFromDatabase.Select(p => p.ToPlayerDTO()).ToArray();
 
-        return CommandResponse<PlayerDTO[]>.Create(playersDTO);
+        var ranking = new Ranking { Date = twoMonthAgoDate.ToString(), Players = playersDTO };
+
+        return CommandResponse<Ranking>.Create(ranking);
 
     }
 }
