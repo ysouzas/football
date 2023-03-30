@@ -6,5 +6,5 @@ public record struct Ranking
 {
     public PlayerDTO[] Players { get; set; }
 
-    public string Date { get; set; }
+    public DateTime Date { get; set; }
 }

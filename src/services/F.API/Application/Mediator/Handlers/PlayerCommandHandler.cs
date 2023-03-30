@@ -138,7 +138,7 @@ public class PlayerCommandHandler : CommandHandler, IRequestHandler<AddPlayerCom
 
         var playersDTO = playersFromDatabase.Select(p => p.ToPlayerDTO()).ToArray();
 
-        var ranking = new Ranking { Date = twoMonthAgoDate.ToString(), Players = playersDTO };
+        var ranking = new Ranking { Date = twoMonthAgoDate.ToDateTime(new TimeOnly()), Players = playersDTO };
 
         return CommandResponse<Ranking>.Create(ranking);
 
