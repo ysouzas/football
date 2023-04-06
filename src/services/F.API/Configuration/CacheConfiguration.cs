@@ -9,6 +9,7 @@ public static class CacheConfiguration
             options.Configuration = configuration.GetConnectionString("Cache");
             options.InstanceName = "main";
         });
+
         return services;
     }
 }

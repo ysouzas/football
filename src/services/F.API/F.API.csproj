@@ -31,4 +31,14 @@
     <ProjectReference Include="..\..\shared\F.Models\F.Models.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="Data\Storage\" />
+    <None Remove="Data\Storage\Interfaces\" />
+    <None Remove="Models\TableStorage\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Data\Storage\" />
+    <Folder Include="Data\Storage\Interfaces\" />
+    <Folder Include="Models\TableStorage\" />
+  </ItemGroup>
 </Project>

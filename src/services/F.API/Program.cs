@@ -9,7 +9,7 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
 
         builder.Services.AddApiConfiguration(builder.Configuration);
-        builder.Services.RegisterServices();
+        builder.Services.RegisterServices(builder.Configuration);
 
         var app = builder.Build();
 

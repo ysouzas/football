@@ -1,4 +1,5 @@
 ﻿using F.API.Models.DTO.Model;
+using F.API.Models.TableStorage;
 using F.Models;
 
 namespace F.API.Extensions;
@@ -19,6 +20,24 @@ public static class PlayerExtensions
     {
         return me.Select(p => p.ToPlayerDTO()).ToArray();
     }
+
+
+    public static PlayerTableStorageEntity ToPlayerTableStorageEntity(this PlayerDTO me)
+    {
+        return new PlayerTableStorageEntity
+        (
+            "FOOTBALL",
+            me.Id.ToString(),
+            ((double)me.GeneralScore),
+            me.Name
+        );
+    }
+
+    public static PlayerTableStorageEntity[] ToPlayerTableStorageEntity(this IList<PlayerDTO> me)
+    {
+        return me.Select(p => p.ToPlayerTableStorageEntity()).ToArray();
+    }
+
 
     public static PlayerWithDetailsDTO ToPlayerWithDetailsDTO(this Player me)
     {
