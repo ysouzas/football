@@ -27,7 +27,7 @@ namespace F.API.Application.Mediator.Handlers
 
         public async Task<ValidationResult> Handle(GetAllPlayersToTableQuery request, CancellationToken cancellationToken)
         {
-            var command = new GetAllPlayersQuery();
+            var command = new GetAllPlayersWithDetailsQuery();
             var result = await _mediator.Send(command, cancellationToken);
 
             foreach (var playerEntity in result.Response?.ToPlayerTableStorageEntity())
